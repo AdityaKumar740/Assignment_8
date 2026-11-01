@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { CalendarDays, MapPin, Search } from "lucide-react"
 import type { CommunityEvent } from "@/lib/events"
+import { fetchEvents } from "@/lib/api-events"
 
 export default function EventsPage() {
   const [events, setEvents] = useState<CommunityEvent[]>([])
@@ -13,7 +14,7 @@ export default function EventsPage() {
   const [category, setCategory] = useState("All")
 
   useEffect(() => {
-    fetch("/api/events").then((res) => { if (!res.ok) throw new Error(); return res.json() }).then(setEvents).catch(() => setError(true)).finally(() => setLoading(false))
+    fetchEvents().then(setEvents).catch(() => setError(true)).finally(() => setLoading(false))
   }, [])
 
   const filtered = useMemo(() => events.filter((event) => event.title.toLowerCase().includes(search.toLowerCase()) && (category === "All" || event.category === category)).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()), [events, search, category])

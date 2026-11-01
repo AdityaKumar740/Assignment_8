@@ -13,9 +13,8 @@ export function Navbar() {
   const [dark, setDark] = useState(false)
   const pathname = usePathname()
   const profileUser = user ?? {
-    id: "demo-user",
-    name: "Alex Morgan",
-    email: "alexmorgan@gmail.com",
+    id: "",
+    name: "Community Connect",
     photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
   }
 
@@ -57,7 +56,6 @@ export function Navbar() {
               <div className="profile-menu">
                 <div className="profile-menu-head">
                   <strong>{profileUser.name}</strong>
-                  <span>{profileUser.email}</span>
                 </div>
                 <Link href="/create-event" onClick={close}><Plus size={17}/> Create Event</Link>
                 <Link href="/manage-events" onClick={close}><Settings size={17}/> Manage Events</Link>

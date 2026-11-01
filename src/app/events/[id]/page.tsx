@@ -6,6 +6,7 @@ import { CalendarDays, CheckCircle2, Clock, MapPin, Users } from "lucide-react"
 import { toast } from "sonner"
 import { Suspense } from "react"
 import type { CommunityEvent } from "@/lib/events"
+import { fetchEvent } from "@/lib/api-events"
 
 function EventDetailsContent() {
   const params = useParams<{ id: string }>()
@@ -17,7 +18,7 @@ function EventDetailsContent() {
   })
 
   useEffect(() => {
-    fetch(`/api/events/${params.id}`).then((res)=>res.ok?res.json():null).then(setEvent)
+    fetchEvent(params.id).then(setEvent)
   }, [params.id])
 
   const join = () => {

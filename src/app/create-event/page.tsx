@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
+import type { CommunityEvent } from "@/lib/events"
 
 const today = new Date().toISOString().slice(0,10)
 const schema=z.object({
@@ -21,7 +22,7 @@ export default function CreateEventPage(){
   const router=useRouter()
   const {register,handleSubmit,formState:{errors,isSubmitting}}=useForm<FormData>({resolver:zodResolver(schema)})
   const submit=async(data:FormData)=>{
-    try{const res=await fetch("http://localhost:5000/create-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...data,date:`${data.date}T09:00:00`})});if(!res.ok)throw new Error();const event=await res.json();const created=JSON.parse(localStorage.getItem("cc-created")||"[]");localStorage.setItem("cc-created",JSON.stringify([...created,event.id ?? event._id]));toast.success("Event created successfully");router.push("/events")}
+    try{const res=await fetch("http://localhost:5000/create-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...data,date:`${data.date}T09:00:00`})});if(!res.ok)throw new Error();const event=await res.json();const created=JSON.parse(localStorage.getItem("cc-created")||"[]");const insertedId=typeof event.insertedId==="string"?event.insertedId:event.insertedId?.toString();const createdId=String(event.id ?? event._id ?? insertedId ?? "");if(createdId) {localStorage.setItem("cc-created",JSON.stringify([...created.filter((id:string)=>id!==createdId),createdId]))}const cached=JSON.parse(localStorage.getItem("cc-created-events")||"[]") as CommunityEvent[];const createdEvent={id:createdId,title:data.title,description:data.description,category:data.category,location:data.location,date:`${data.date}T09:00:00`,image:data.image,organizer:{name:"Community Organizer",role:"Community Connect",avatar:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80"},attendees:0}satisfies CommunityEvent;if(createdId)localStorage.setItem("cc-created-events",JSON.stringify([...cached.filter((item)=>item.id!==createdId),createdEvent]));toast.success("Event created successfully");router.push("/events")}
     catch{toast.error("We couldn’t create the event. Please try again.");}
   }
   return <div className="page-shell"><div className="form-shell"><div className="page-title-row"><span className="section-label">Organize your community</span><h1>Create an Event</h1></div><form className="form-card" onSubmit={handleSubmit(submit)}><div className="form-grid">

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { ArrowRight, CalendarDays, HeartHandshake, MapPin, Search, Sprout } from "lucide-react"
 import type { CommunityEvent } from "@/lib/events"
-import { initialEvents } from "@/lib/events"
+import { fetchEvents } from "@/lib/api-events"
 
 function EventCard({ event }: { event: CommunityEvent }) {
   const date = new Date(event.date)
@@ -25,9 +25,9 @@ function EventCard({ event }: { event: CommunityEvent }) {
 }
 
 export default function Home() {
-  const [events, setEvents] = useState<CommunityEvent[]>(initialEvents)
+  const [events, setEvents] = useState<CommunityEvent[]>([])
   useEffect(() => {
-    fetch("/api/events").then((res) => res.ok ? res.json() : Promise.reject()).then((data) => setEvents(data.slice(0, 6))).catch(() => {})
+    fetchEvents().then((data) => setEvents(data.slice(0, 6))).catch(() => setEvents([]))
   }, [])
 
   return (

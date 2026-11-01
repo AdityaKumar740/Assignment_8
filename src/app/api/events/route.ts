@@ -18,7 +18,7 @@ export async function GET() {
       attendees: event.attendees ?? 0,
       createdBy: "demo-user",
     }))
-    return NextResponse.json([...initialEvents, ...normalized])
+    return NextResponse.json([...normalized, ...initialEvents])
   } catch {
     return NextResponse.json([...initialEvents, ...serverEvents.filter((event) => event.createdBy === "demo-user")])
   }
