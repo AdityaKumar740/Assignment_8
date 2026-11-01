@@ -13,20 +13,43 @@ function EventDetailsContent() {
   const [event, setEvent] = useState<CommunityEvent | null>(null)
   const [joined, setJoined] = useState(() => {
     if (typeof window === "undefined") return false
-    const joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[]
+    let joinedIds: string[] = []
+    try { joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[] } catch { joinedIds = [] }
     return joinedIds.includes(params.id)
   })
 
   useEffect(() => {
-    fetchEvent(params.id).then(setEvent)
+    fetchEvent(params.id).then((loadedEvent) => {
+      setEvent(loadedEvent)
+      if (!loadedEvent) {
+        let joinedIds: string[] = []
+        try { joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[] } catch { joinedIds = [] }
+        localStorage.setItem("cc-joined", JSON.stringify(joinedIds.filter((id) => id !== params.id)))
+        setJoined(false)
+      }
+    })
   }, [params.id])
 
   const join = () => {
     if (joined) return
-    const joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[]
-    localStorage.setItem("cc-joined", JSON.stringify([...joinedIds, params.id]))
+    let joinedIds: string[] = []
+    try { joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[] } catch { joinedIds = [] }
+    if (!joinedIds.includes(params.id)) {
+      localStorage.setItem("cc-joined", JSON.stringify([...joinedIds, params.id]))
+      window.dispatchEvent(new Event("cc-joined-change"))
+    }
     setJoined(true)
     toast.success("You’ve joined the event!")
+  }
+
+  const leave = () => {
+    if (!joined) return
+    let joinedIds: string[] = []
+    try { joinedIds = JSON.parse(localStorage.getItem("cc-joined") || "[]") as string[] } catch { joinedIds = [] }
+    localStorage.setItem("cc-joined", JSON.stringify(joinedIds.filter((id) => id !== params.id)))
+    setJoined(false)
+    window.dispatchEvent(new Event("cc-joined-change"))
+    toast.success("You’ve left the event")
   }
 
   if (!event) return <div className="page-shell"><div className="empty-state"><h2>Event not found</h2><p>This event may no longer be available.</p></div></div>
@@ -47,8 +70,8 @@ function EventDetailsContent() {
           <div className="detail-row"><Clock size={18}/><span>{date.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}</span></div>
           <div className="detail-row"><MapPin size={18}/><span>{event.location}</span></div>
           <div className="detail-row"><Users size={18}/><span>{event.attendees} volunteers attending</span></div>
-          <button className="join-btn" onClick={join} disabled={joined}>{joined ? <><CheckCircle2 size={17} style={{marginRight:6}}/> Already joined</> : "Join Event"}</button>
-          {joined && <p style={{fontSize:12,textAlign:"center",color:"var(--green)"}}>You’re on the volunteer list!</p>}
+          <button className={`join-btn${joined ? " joined" : ""}`} onClick={joined ? leave : join}>{joined ? <><CheckCircle2 size={17} style={{marginRight:6}}/> Leave Event</> : "Join Event"}</button>
+          {joined && <p style={{fontSize:12,textAlign:"center",color:"var(--green)"}}>You’re on the volunteer list. Click to leave.</p>}
         </aside>
       </div>
     </div>

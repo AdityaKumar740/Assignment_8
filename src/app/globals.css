@@ -151,7 +151,23 @@ button { cursor: pointer; }
 .detail-row:last-of-type { border-bottom: 0; }
 .detail-row svg { color: var(--green); flex-shrink: 0; }
 .join-btn { width: 100%; height: 48px; border: 0; border-radius: 9px; background: var(--green); color: white; font-weight: 900; margin-top: 14px; }
-.join-btn:disabled { background: var(--muted); }
+.join-btn.joined {
+  background: color-mix(in srgb, var(--lime) 48%, var(--background));
+  color: var(--green-dark);
+  border: 1px solid color-mix(in srgb, var(--lime) 68%, var(--green));
+  box-shadow: none;
+  cursor: default;
+  opacity: 1;
+}
+.join-btn.joined:hover {
+  background: color-mix(in srgb, var(--lime) 48%, var(--background));
+  transform: none;
+}
+.dark .join-btn.joined {
+  background: #263a30;
+  color: var(--lime);
+  border-color: #557462;
+}
 .organizer { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
 .organizer img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .organizer span { display: block; color: var(--muted); font-size: 12px; }

@@ -37,13 +37,8 @@ export async function fetchEvents(): Promise<CommunityEvent[]> {
         `${event.title.toLowerCase().trim()}|${event.location.toLowerCase().trim()}`
       )
     )
-    const localCreatedEvents = typeof window === "undefined"
-      ? []
-      : JSON.parse(localStorage.getItem("cc-created-events") || "[]") as CommunityEvent[]
-    const remoteIds = new Set(normalizedRemoteEvents.map((event) => event.id))
     return [
       ...normalizedRemoteEvents,
-      ...localCreatedEvents.filter((event) => !remoteIds.has(event.id)),
       ...initialEvents.filter((event) =>
         !remoteKeys.has(`${event.title.toLowerCase().trim()}|${event.location.toLowerCase().trim()}`)
       ),
@@ -68,6 +63,10 @@ export async function fetchEvents(): Promise<CommunityEvent[]> {
 
 export async function fetchEvent(id: string): Promise<CommunityEvent | null> {
   const demoEvent = initialEvents.find((event) => event.id === id)
+  const localCreatedEvents = typeof window === "undefined"
+    ? []
+    : JSON.parse(localStorage.getItem("cc-created-events") || "[]") as CommunityEvent[]
+  const localEvent = localCreatedEvents.find((event) => event.id === id)
   try {
     const response = await fetch(`http://localhost:5000/events/${id}`, { cache: "no-store" })
     if (response.ok) {
@@ -89,8 +88,9 @@ export async function fetchEvent(id: string): Promise<CommunityEvent | null> {
         createdBy: "demo-user",
       }
     }
+    return demoEvent ?? null
   } catch {
     // Demo event details remain available when the backend is offline.
+    return localEvent ?? demoEvent ?? null
   }
-  return demoEvent ?? null
 }

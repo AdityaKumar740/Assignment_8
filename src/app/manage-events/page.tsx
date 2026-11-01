@@ -21,6 +21,9 @@ export default function ManageEventsPage(){
    localStorage.setItem("cc-created",JSON.stringify(created.filter(createdId=>createdId!==id)))
    const cached=JSON.parse(localStorage.getItem("cc-created-events")||"[]") as CommunityEvent[]
    localStorage.setItem("cc-created-events",JSON.stringify(cached.filter(event=>event.id!==id)))
+   let joined:string[]=[]
+   try{joined=JSON.parse(localStorage.getItem("cc-joined")||"[]") as string[]}catch{joined=[]}
+   localStorage.setItem("cc-joined",JSON.stringify(joined.filter(joinedId=>joinedId!==id)))
    toast.success("Event deleted")
   }catch(error){toast.error(error instanceof Error?error.message:"Couldn’t delete event")}
  }

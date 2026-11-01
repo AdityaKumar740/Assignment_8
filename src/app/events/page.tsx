@@ -24,7 +24,7 @@ export default function EventsPage() {
       <div className="page-title-row"><span className="section-label">Find your next opportunity</span><h1>Upcoming Events</h1><p style={{color:"var(--muted)"}}>Join neighbors making a real difference, one small action at a time.</p></div>
       <div className="filters">
         <label className="field-control"><Search size={18}/><input value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Search events by title"/></label>
-        <label className="field-control"><select value={category} onChange={(e)=>setCategory(e.target.value)}><option>All</option><option>Cleanup</option><option>Plantation</option><option>Donation</option><option>Community Support</option></select></label>
+        <label className="field-control"><select value={category} onChange={(e)=>setCategory(e.target.value)}><option>All</option><option>Cleanup</option><option>Plantation</option><option>Donation</option><option>Community Support</option><option>Education</option><option>Health &amp; Wellness</option><option>Animal Welfare</option><option>Environment</option><option>Food Distribution</option><option>Disaster Relief</option><option>Youth Mentoring</option><option>Senior Support</option><option>Arts &amp; Culture</option><option>Fundraiser</option><option>Other</option></select></label>
         <label className="field-control"><CalendarDays size={18}/><select defaultValue="nearest"><option value="nearest">Nearest date</option></select></label>
       </div>
       {loading ? <div className="events-grid">{[1,2,3,4,5,6].map((n)=><div className="skeleton" key={n}/>)}</div> :
