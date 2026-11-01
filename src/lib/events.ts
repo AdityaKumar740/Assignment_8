@@ -13,6 +13,8 @@ export type CommunityEvent = {
   }
   attendees: number
   createdBy?: string
+  createdByEmail?: string
+  joinedByEmails?: string[]
 }
 
 export const initialEvents: CommunityEvent[] = [

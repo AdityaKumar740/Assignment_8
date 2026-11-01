@@ -29,6 +29,8 @@ export async function fetchEvents(): Promise<CommunityEvent[]> {
         image: String(event.image ?? event.thumbnail ?? fallbackImage),
         organizer,
         attendees: Number(event.attendees ?? 0),
+        createdByEmail: typeof event.createdByEmail === "string" ? event.createdByEmail : undefined,
+        joinedByEmails: Array.isArray(event.joinedByEmails) ? event.joinedByEmails.map(String) : [],
       } satisfies CommunityEvent
     })
 
@@ -85,7 +87,8 @@ export async function fetchEvent(id: string): Promise<CommunityEvent | null> {
         image: String(event.image ?? event.thumbnail ?? fallbackImage),
         organizer,
         attendees: Number(event.attendees ?? 0),
-        createdBy: "demo-user",
+        createdByEmail: typeof event.createdByEmail === "string" ? event.createdByEmail : undefined,
+        joinedByEmails: Array.isArray(event.joinedByEmails) ? event.joinedByEmails.map(String) : [],
       }
     }
     return demoEvent ?? null

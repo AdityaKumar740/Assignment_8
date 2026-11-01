@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { CalendarDays, ChevronDown, LogOut, Menu, Moon, Plus, Settings, Ticket, UserRound, X } from "lucide-react"
-import { useAuth } from "@/lib/auth"
+import { useAuth } from "@/lib/auth-provider"
 
 export function Navbar() {
   const { user, logout } = useAuth()
@@ -15,7 +15,7 @@ export function Navbar() {
   const profileUser = user ?? {
     id: "",
     name: "Community Connect",
-    photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
+    photo: "",
   }
 
   useEffect(() => {
@@ -49,10 +49,12 @@ export function Navbar() {
           {!user && <Link href="/login" className="login-btn">Log In</Link>}
           <div className="profile-wrap">
             <button className="profile-button" onClick={() => setProfileOpen(!profileOpen)} title={profileUser.name}>
-              <img src={profileUser.photo} alt={profileUser.name} />
+              {user?.photo
+                ? <img src={user.photo} alt={user.name} />
+                : <span className="profile-placeholder" aria-label="Guest profile"><UserRound size={22} /></span>}
               <ChevronDown size={14} />
             </button>
-            {profileOpen && (
+            {profileOpen && user && (
               <div className="profile-menu">
                 <div className="profile-menu-head">
                   <strong>{profileUser.name}</strong>
@@ -61,7 +63,7 @@ export function Navbar() {
                 <Link href="/manage-events" onClick={close}><Settings size={17}/> Manage Events</Link>
                 <Link href="/joined-events" onClick={close}><Ticket size={17}/> Joined Events</Link>
                 <Link href="/profile" onClick={close}><UserRound size={17}/> Profile</Link>
-                <button className="logout-row" onClick={() => { logout(); close() }}><LogOut size={17}/> Logout</button>
+                <button className="logout-row" onClick={() => { logout(); close(); window.location.href="/login" }}><LogOut size={17}/> Logout</button>
               </div>
             )}
           </div>
@@ -76,11 +78,13 @@ export function Navbar() {
           <Link href="/#why-us" onClick={close}>About Us</Link>
           <button onClick={toggleTheme}><Moon size={18}/> Toggle theme</button>
           {!user && <Link href="/login" onClick={close}>Log In</Link>}
-          <Link href="/create-event" onClick={close}><Plus size={18}/> Create Event</Link>
-          <Link href="/manage-events" onClick={close}><Settings size={18}/> Manage Events</Link>
-          <Link href="/joined-events" onClick={close}><Ticket size={18}/> Joined Events</Link>
-          <Link href="/profile" onClick={close}><UserRound size={18}/> Profile</Link>
-          <button onClick={() => { logout(); close() }}><LogOut size={18}/> Logout</button>
+          {user && <>
+            <Link href="/create-event" onClick={close}><Plus size={18}/> Create Event</Link>
+            <Link href="/manage-events" onClick={close}><Settings size={18}/> Manage Events</Link>
+            <Link href="/joined-events" onClick={close}><Ticket size={18}/> Joined Events</Link>
+            <Link href="/profile" onClick={close}><UserRound size={18}/> Profile</Link>
+            <button onClick={() => { logout(); close(); window.location.href="/login" }}><LogOut size={18}/> Logout</button>
+          </>}
         </div>
       )}
     </header>

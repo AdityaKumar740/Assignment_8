@@ -49,6 +49,7 @@ button { cursor: pointer; }
 .profile-wrap { position: relative; }
 .profile-button { border: 0; background: transparent; display: flex; align-items: center; gap: 6px; color: var(--ink); }
 .profile-button img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--lime); }
+.profile-placeholder { width: 40px; height: 40px; border-radius: 50%; background: #505862; color: white; display: grid; place-items: center; border: 2px solid var(--lime); }
 .profile-menu { position: absolute; right: 0; top: 54px; width: 260px; border-radius: 16px; border: 1px solid var(--line); background: var(--background); box-shadow: 0 18px 50px rgba(14,74,48,.18); padding: 10px; }
 .profile-menu-head { padding: 8px 12px 14px; border-bottom: 1px solid var(--line); margin-bottom: 7px; display: flex; flex-direction: column; }
 .profile-menu-head strong { font-size: 15px; }
@@ -124,6 +125,10 @@ button { cursor: pointer; }
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-group.full { grid-column: 1/-1; }
 .form-group label { font-size: 13px; font-weight: 800; }
+.optional-label { color: var(--muted); font-weight: 600; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(6, 35, 24, .55); display:grid; place-items:center; padding:20px; }
+.modal-card { width:min(760px,100%); max-height:90vh; overflow:auto; position:relative; }
+.modal-close { position:absolute; right:18px; top:18px; border:0; background:transparent; color:var(--ink); cursor:pointer; }
 .form-group input, .form-group textarea, .form-group select { width: 100%; border: 1px solid var(--line); border-radius: 9px; background: var(--background); color: var(--ink); padding: 12px; outline: none; }
 .form-group textarea { min-height: 120px; resize: vertical; }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(23,107,69,.08); }
