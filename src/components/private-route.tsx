@@ -17,8 +17,8 @@ export function PrivateRoute({ children }: { children: React.ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div className="page-shell">
-        <div className="empty-state">
+      <div className="page-shell min-h-[50vh]">
+        <div className="empty-state mx-auto max-w-md text-center">
           <h2>{loading ? "Checking your account..." : "Redirecting to login..."}</h2>
         </div>
       </div>

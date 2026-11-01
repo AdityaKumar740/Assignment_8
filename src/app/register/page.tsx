@@ -34,7 +34,7 @@ export default function RegisterPage() {
   await authClient.signIn.social({provider:"google",callbackURL:"/"})
  }
   return (
-    <div className="auth-layout">
+    <div className="auth-layout min-h-[680px]">
       <div className="auth-panel">
         <span className="eyebrow">Your community needs you</span>
         <h2>Turn care into action.</h2>

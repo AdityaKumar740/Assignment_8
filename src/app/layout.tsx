@@ -23,7 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col bg-(--background) text-(--ink) antialiased">
         <AuthProvider>
           <Suspense fallback={<header className="site-header" />}>
             <Navbar />

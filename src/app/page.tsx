@@ -9,7 +9,7 @@ import { fetchEvents } from "@/lib/api-events"
 function EventCard({ event }: { event: CommunityEvent }) {
   const date = new Date(event.date)
   return (
-    <article className="event-card">
+    <article className="event-card overflow-hidden rounded-2xl border border-(--line) bg-(--background) shadow-lg">
       <img className="event-image" src={event.image} alt={event.title} />
       <div className="event-body">
         <span className="category">{event.category}</span>
@@ -44,7 +44,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section mx-auto px-6 py-20">
         <div className="section-head">
           <div><span className="section-label">Make a difference nearby</span><h2>Upcoming Events</h2></div>
           <Link href="/events" className="text-link">View All Events <ArrowRight size={15}/></Link>
@@ -52,7 +52,7 @@ export default function Home() {
         <div className="events-grid">{events.slice(0, 6).map((event) => <EventCard key={event.id} event={event}/>)}</div>
       </section>
 
-      <section className="section why-section" id="why-us">
+      <section className="section why-section mx-auto py-20" id="why-us">
         <div className="section-head">
           <div><span className="section-label">Why choose us</span><h2>Community starts with you</h2></div>
         </div>
@@ -63,7 +63,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" id="gallery">
+      <section className="section mx-auto px-6 py-20" id="gallery">
         <div className="section-head"><div><span className="section-label">Our community in action</span><h2>Moments that matter</h2></div></div>
         <div className="gallery-grid">
           <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=85" alt="Volunteers working together"/>

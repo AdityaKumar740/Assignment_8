@@ -34,8 +34,8 @@ export function Navbar() {
   const close = () => { setMenuOpen(false); setProfileOpen(false) }
 
   return (
-    <header className="site-header">
-      <nav className="nav-shell">
+    <header className="site-header sticky top-0 z-50">
+      <nav className="nav-shell mx-auto flex items-center justify-between">
         <Link href="/" className="brand" onClick={close} aria-label="Community Connect home">
           <span className="brand-mark"><span /></span>
           <span>Community <b>Connect</b></span>

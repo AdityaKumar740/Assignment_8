@@ -2,6 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@theme inline {
+  --color-forest: #176b45;
+  --color-forest-dark: #0e4a30;
+  --color-lime: #d9f27a;
+  --color-cream: #fbfaf6;
+  --font-sans: var(--font-manrope), sans-serif;
+}
+
 :root {
   --green: #176b45;
   --green-dark: #0e4a30;

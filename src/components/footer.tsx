@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer mt-auto bg-forest-dark text-white">
       <div className="footer-grid">
         <div>
           <div className="footer-brand"><span className="brand-mark"><span /></span><span>Community Connect</span></div>

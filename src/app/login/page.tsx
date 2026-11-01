@@ -40,7 +40,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-layout">
+    <div className="auth-layout min-h-[680px]">
       <div className="auth-panel">
         <span className="eyebrow">Good things happen together</span>
         <h2>Make a difference where you live.</h2>
