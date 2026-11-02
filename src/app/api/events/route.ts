@@ -44,14 +44,37 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
-  const event: CommunityEvent = {
-    ...body,
-    id: `${body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`,
-    organizer: { name: "Alex Morgan", role: "Community Organizer", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" },
-    attendees: 0,
-    createdBy: "demo-user",
+  const requestHeaders = await headers()
+  const session = await auth.api.getSession({ headers: requestHeaders })
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
-  serverEvents.push(event)
-  return NextResponse.json(event, { status: 201 })
+
+  const body = await request.json()
+  try {
+    const tokenResult = await auth.api.getToken({ headers: requestHeaders })
+    const token = tokenResult?.token
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
+    const response = await fetch("http://localhost:5000/create-event", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        ...body,
+        createdByEmail: session.user.email.toLowerCase(),
+      }),
+    })
+
+    const responseBody = await response.text()
+    const data = responseBody ? JSON.parse(responseBody) : null
+    return NextResponse.json(data, { status: response.status })
+  } catch (error) {
+    console.error("Create event token error:", error instanceof Error ? error.message : error)
+    return NextResponse.json({ message: "Event service is unavailable" }, { status: 502 })
+  }
 }

@@ -91,6 +91,25 @@ export async function POST(
     return NextResponse.json({ error: "Invalid action" }, { status: 400 })
   }
 
+  if (!/^[a-f\d]{24}$/i.test(id)) {
+    const event = serverEvents.find((item) => item.id === id)
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    }
+
+    const email = session.user.email.toLowerCase()
+    event.joinedByEmails = event.joinedByEmails ?? []
+    if (action === "join") {
+      if (!event.joinedByEmails.includes(email)) {
+        event.joinedByEmails.push(email)
+      }
+    } else {
+      event.joinedByEmails = event.joinedByEmails.filter((item) => item !== email)
+    }
+
+    return NextResponse.json({ joined: action === "join" })
+  }
+
   try {
     const tokenResult = await auth.api.getToken({ headers: requestHeaders })
     let token = tokenResult?.token
@@ -122,7 +141,7 @@ export async function POST(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: authorization,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: session.user.email.toLowerCase() }),
     })

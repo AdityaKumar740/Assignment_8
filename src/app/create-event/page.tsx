@@ -29,7 +29,7 @@ function CreateEventContent(){
     try{
       if(!user?.email){toast.error("Please sign in again");return}
       const volunteerCount=Number(data.attendees)
-      const res=await fetch("http://localhost:5000/create-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      const res=await fetch("/api/events",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
         ...data,attendees:volunteerCount,date:`${data.date}T09:00:00`,
         createdByEmail:user.email.toLowerCase(),
         organizer:{name:user.name,role:"Community Organizer",avatar:user.photo||"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80"}
