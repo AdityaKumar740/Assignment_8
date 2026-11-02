@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
 
 export type User = {
@@ -21,8 +21,9 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const session = authClient.useSession()
+  const [loggedOut, setLoggedOut] = useState(false)
   const betterAuthUser = session.data?.user
-  const user: User | null = betterAuthUser
+  const user: User | null = !loggedOut && betterAuthUser
     ? {
         id: betterAuthUser.id,
         name: betterAuthUser.name || betterAuthUser.email?.split("@")[0] || "Community Member",
@@ -33,8 +34,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = () => {}
   const logout = async () => {
+    setLoggedOut(true)
+    authClient.hydrateSession(null)
     await authClient.signOut()
+    authClient.hydrateSession(null)
   }
+
+  useEffect(() => {
+    if (betterAuthUser) setLoggedOut(false)
+  }, [betterAuthUser])
 
   return (
     <AuthContext.Provider value={{ user, loading: session.isPending, login, logout }}>

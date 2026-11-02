@@ -95,6 +95,12 @@ button { cursor: pointer; }
 .event-meta { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: 13px; }
 .event-meta span { display: flex; align-items: center; gap: 7px; }
 .event-body .card-action { margin-top: 18px; height: 42px; width: 100%; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--green); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.joined-event-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+.joined-event-actions .card-action { margin-top: 0; cursor: pointer; text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
+.joined-event-actions .view-event-action:hover { background: color-mix(in srgb, var(--lime) 28%, var(--background)); border-color: var(--green); }
+.joined-event-actions .leave-event-action { gap: 7px; color: #b42318; border-color: #efc7c3; background: #fffafa; }
+.joined-event-actions .leave-event-action:hover { background: #fff0ef; border-color: #d98b83; color: #9f1c12; }
+.dark .joined-event-actions .leave-event-action { color: #f3a9a1; border-color: #70433d; background: #342725; }
 .why-section { background: var(--cream); max-width: none; padding-left: calc((100% - 1132px)/2); padding-right: calc((100% - 1132px)/2); }
 .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
 .why-card { border-radius: 16px; background: var(--background); border: 1px solid var(--line); padding: 34px 28px; }

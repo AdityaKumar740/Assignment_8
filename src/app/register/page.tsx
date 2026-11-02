@@ -25,13 +25,15 @@ export default function RegisterPage() {
   const result=await authClient.signUp.email({name:name.trim(),email:normalizedEmail,password,image:image.trim()||undefined})
   setLoading(false)
   if(result.error){toast.error(result.error.message||"Registration failed");return}
-  toast.success("Account created successfully")
-  router.push("/")
+  authClient.hydrateSession(null)
+  await authClient.signOut()
+  toast.success("Account created successfully. Please log in.")
+  router.replace("/login")
   router.refresh()
  }
 
  const googleRegister=async()=>{
-  await authClient.signIn.social({provider:"google",callbackURL:"/"})
+  await authClient.signIn.social({provider:"google",callbackURL:"/login"})
  }
   return (
     <div className="auth-layout min-h-[680px]">

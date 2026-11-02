@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { CalendarDays, ChevronDown, LogOut, Menu, Moon, Plus, Settings, Ticket, UserRound, X } from "lucide-react"
 import { useAuth } from "@/lib/auth-provider"
 
 export function Navbar() {
   const { user, logout } = useAuth()
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [dark, setDark] = useState(false)
@@ -32,6 +33,12 @@ export function Navbar() {
   }
 
   const close = () => { setMenuOpen(false); setProfileOpen(false) }
+  const handleLogout = async () => {
+    close()
+    await logout()
+    router.replace("/login")
+    router.refresh()
+  }
 
   return (
     <header className="site-header sticky top-0 z-50">
@@ -63,7 +70,7 @@ export function Navbar() {
                 <Link href="/manage-events" onClick={close}><Settings size={17}/> Manage Events</Link>
                 <Link href="/joined-events" onClick={close}><Ticket size={17}/> Joined Events</Link>
                 <Link href="/profile" onClick={close}><UserRound size={17}/> Profile</Link>
-                <button className="logout-row" onClick={() => { logout(); close(); window.location.href="/login" }}><LogOut size={17}/> Logout</button>
+                <button className="logout-row" onClick={handleLogout}><LogOut size={17}/> Logout</button>
               </div>
             )}
           </div>
@@ -83,7 +90,7 @@ export function Navbar() {
             <Link href="/manage-events" onClick={close}><Settings size={18}/> Manage Events</Link>
             <Link href="/joined-events" onClick={close}><Ticket size={18}/> Joined Events</Link>
             <Link href="/profile" onClick={close}><UserRound size={18}/> Profile</Link>
-            <button onClick={() => { logout(); close(); window.location.href="/login" }}><LogOut size={18}/> Logout</button>
+            <button onClick={handleLogout}><LogOut size={18}/> Logout</button>
           </>}
         </div>
       )}
