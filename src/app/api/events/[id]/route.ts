@@ -162,17 +162,27 @@ export async function POST(
     if (action === "join") {
       if (!event.joinedByEmails.includes(email)) {
         event.joinedByEmails.push(email)
+        event.attendees = Math.max(0, event.attendees + 1)
       }
     } else {
-      event.joinedByEmails = event.joinedByEmails.filter((item) => item !== email)
+      if (event.joinedByEmails.includes(email)) {
+        event.joinedByEmails = event.joinedByEmails.filter((item) => item !== email)
+        event.attendees = Math.max(0, event.attendees - 1)
+      }
     }
 
     return NextResponse.json({ joined: action === "join" })
   }
 
   try {
-    const tokenResult = await auth.api.getToken({ headers: requestHeaders })
-    let token = tokenResult?.token
+    let token: string | undefined
+
+    try {
+      const tokenResult = await auth.api.getToken({ headers: requestHeaders })
+      token = tokenResult?.token
+    } catch (error) {
+      console.error("JWT token retrieval failed:", error instanceof Error ? error.message : error)
+    }
 
     if (!token) {
       const signedResult = await auth.api.signJWT({
