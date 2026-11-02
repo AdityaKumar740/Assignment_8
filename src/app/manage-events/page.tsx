@@ -27,7 +27,7 @@ function ManageEventsContent() {
  const remove=async(id:string)=>{
   if(!confirm("Delete this event? This action cannot be undone.")||!user?.email)return
   try{
-   const res=await fetch(`http://localhost:5000/events/${id}?email=${encodeURIComponent(user.email.toLowerCase())}`,{method:"DELETE"})
+   const res=await fetch(`/api/events/${id}?email=${encodeURIComponent(user.email.toLowerCase())}`,{method:"DELETE"})
    const body=await res.json().catch(()=>null)
    if(!res.ok)throw new Error(body?.message||"Couldn’t delete event")
    setEvents(current=>current.filter(event=>event.id!==id))
@@ -42,7 +42,7 @@ function ManageEventsContent() {
   try{
    const date=new Date(editing.date)
    if(date<=new Date())throw new Error("Event date must be in the future")
-   const res=await fetch(`http://localhost:5000/events/${editing.id}`,{
+   const res=await fetch(`/api/events/${editing.id}`,{
     method:"PATCH",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({...editing,email:user.email.toLowerCase()})
    })

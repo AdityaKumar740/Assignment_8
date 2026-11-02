@@ -65,12 +65,70 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   return event ? NextResponse.json(event) : NextResponse.json({ error: "Event not found" }, { status: 404 })
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const requestHeaders = await headers()
+  const session = await auth.api.getSession({ headers: requestHeaders })
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const { id } = await params
-  const index = serverEvents.findIndex((item) => item.id === id)
-  if (index === -1) return NextResponse.json({ error: "Event not found" }, { status: 404 })
-  serverEvents.splice(index, 1)
-  return NextResponse.json({ success: true })
+  const url = new URL(request.url)
+  const email = url.searchParams.get("email")?.toLowerCase()
+  if (!email || email !== session.user.email.toLowerCase()) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  try {
+    const tokenResult = await auth.api.getToken({ headers: requestHeaders })
+    const token = tokenResult?.token
+    if (!token) return NextResponse.json({ error: "Unable to generate JWT" }, { status: 401 })
+
+    const response = await fetch(
+      `http://localhost:5000/events/${id}?email=${encodeURIComponent(email)}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+
+    const body = await response.text()
+    return NextResponse.json(body ? JSON.parse(body) : { success: true }, { status: response.status })
+  } catch {
+    return NextResponse.json({ error: "Event service is unavailable" }, { status: 502 })
+  }
+}
+
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const requestHeaders = await headers()
+  const session = await auth.api.getSession({ headers: requestHeaders })
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { id } = await params
+  const body = await request.json() as Record<string, unknown>
+  const email = typeof body.email === "string" ? body.email.toLowerCase() : ""
+  if (!email || email !== session.user.email.toLowerCase()) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  try {
+    const tokenResult = await auth.api.getToken({ headers: requestHeaders })
+    const token = tokenResult?.token
+    if (!token) return NextResponse.json({ error: "Unable to generate JWT" }, { status: 401 })
+
+    const response = await fetch(`http://localhost:5000/events/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    })
+
+    const responseBody = await response.text()
+    const data = responseBody ? JSON.parse(responseBody) : null
+    return NextResponse.json(data, { status: response.status })
+  } catch {
+    return NextResponse.json({ error: "Event service is unavailable" }, { status: 502 })
+  }
 }
 
 export async function POST(

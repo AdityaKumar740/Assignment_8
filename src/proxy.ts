@@ -8,7 +8,7 @@ const privateRoutes = [
 ]
 
 export function proxy(request: NextRequest) {
-  const hasSessionCookie = request.cookies
+  const hasSessionToken = request.cookies
     .getAll()
     .some((cookie) =>
       cookie.name === "better-auth.session_token" ||
@@ -17,7 +17,9 @@ export function proxy(request: NextRequest) {
       cookie.name === "__Secure-better-auth.session-token"
     )
 
-  if (!hasSessionCookie && privateRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
+  const hasJwt = request.headers.get("authorization")?.startsWith("Bearer ")
+
+  if (!hasSessionToken && !hasJwt && privateRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
