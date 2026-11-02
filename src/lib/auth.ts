@@ -9,7 +9,9 @@ const db = client.db("assignment-8");
 const configuredBaseURL = process.env.BETTER_AUTH_URL?.trim()
 const baseURL =
   process.env.NODE_ENV === "production"
-    ? "https://assignment-8-taupe-five.vercel.app"
+    ? configuredBaseURL && !configuredBaseURL.includes("localhost")
+      ? configuredBaseURL.replace(/\/+$/, "")
+      : "https://assignment-8-taupe-five.vercel.app"
     : configuredBaseURL ?? "http://localhost:3000"
 
 export const auth = betterAuth({
@@ -22,6 +24,7 @@ export const auth = betterAuth({
     baseURL,
     "http://localhost:3000",
     "https://assignment-8-taupe-five.vercel.app",
+    "https://assignment-8-taupe-five*.vercel.app",
   ],
   emailAndPassword: {
     enabled: true,
