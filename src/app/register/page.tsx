@@ -33,7 +33,9 @@ export default function RegisterPage() {
  }
 
  const googleRegister=async()=>{
-  await authClient.signIn.social({provider:"google",callbackURL:"/login"})
+  await authClient.signIn.social({
+    provider:"google",
+  })
  }
   return (
     <div className="auth-layout min-h-[680px]">
