@@ -3,6 +3,8 @@ import { NextResponse } from "next/server"
 import { serverEvents } from "@/lib/events"
 import { auth } from "@/lib/auth"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "")
+
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   let authorization: string | undefined
 
@@ -20,7 +22,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   let event = serverEvents.find((item) => item.id === id)
   if (!event && /^[a-f\d]{24}$/i.test(id)) {
     try {
-      const response = await fetch(`http://localhost:5000/events/${id}`, {
+      const response = await fetch(`${API_URL}/events/${id}`, {
         cache: "no-store",
         headers: authorization ? { Authorization: authorization } : {},
       })
@@ -83,7 +85,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     if (!token) return NextResponse.json({ error: "Unable to generate JWT" }, { status: 401 })
 
     const response = await fetch(
-      `http://localhost:5000/events/${id}?email=${encodeURIComponent(email)}`,
+      `${API_URL}/events/${id}?email=${encodeURIComponent(email)}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -114,7 +116,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const token = tokenResult?.token
     if (!token) return NextResponse.json({ error: "Unable to generate JWT" }, { status: 401 })
 
-    const response = await fetch(`http://localhost:5000/events/${id}`, {
+    const response = await fetch(`${API_URL}/events/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -192,10 +194,11 @@ export async function POST(
       return NextResponse.json({ error: "Unable to generate JWT" }, { status: 401 })
     }
 
-    console.log("Backend request URL:", `http://localhost:5000/events/${id}/${action}`)
+    const backendUrl = `${API_URL}/events/${id}/${action}`
+    console.log("Backend request URL:", backendUrl)
     const authorization = `Bearer ${token}`
     console.log("Authorization sent to backend:", authorization)
-    const response = await fetch(`http://localhost:5000/events/${id}/${action}`, {
+    const response = await fetch(backendUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

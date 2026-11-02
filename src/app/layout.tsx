@@ -21,11 +21,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} h-full antialiased`}
+      className={`${manrope.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-screen flex flex-col bg-(--background) text-(--ink) antialiased">
+      <body className="flex min-h-screen flex-col bg-(--background) font-sans text-(--ink) antialiased">
         <AuthProvider>
-          <Suspense fallback={<header className="site-header" />}>
+          <Suspense fallback={<header className="h-[76px] border-b border-(--line)" />}>
             <Navbar />
           </Suspense>
           <main>{children}</main>

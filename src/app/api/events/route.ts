@@ -3,6 +3,8 @@ import { NextResponse } from "next/server"
 import { serverEvents, type CommunityEvent, initialEvents } from "@/lib/events"
 import { auth } from "@/lib/auth"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "")
+
 export async function GET() {
   try {
     let authorization: string | undefined
@@ -15,7 +17,7 @@ export async function GET() {
       console.log("Events GET token error:", error instanceof Error ? error.message : error)
     }
 
-    const response = await fetch("http://localhost:5000/events", {
+    const response = await fetch(`${API_URL}/events`, {
       cache: "no-store",
       headers: authorization ? { Authorization: authorization } : {},
     })
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const response = await fetch("http://localhost:5000/create-event", {
+    const response = await fetch(`${API_URL}/create-event`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
