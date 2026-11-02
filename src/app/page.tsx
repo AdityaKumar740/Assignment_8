@@ -74,9 +74,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto flex max-w-[1180px] flex-col items-center justify-between gap-5 rounded-3xl bg-forest px-8 py-10 text-white md:flex-row">
-        <div><h2 className="text-2xl font-black">Good news, straight to your inbox.</h2><p className="mt-2 text-white/75">Monthly events, volunteer stories, and ways to help.</p></div>
-      </section>
     </>
   )
 }
