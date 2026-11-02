@@ -16,7 +16,7 @@ function JoinedEventsContent(){
  const leaveEvent=async(id:string)=>{
   if(!user?.email)return
   try{
-   const res=await fetch(`http://localhost:5000/events/${id}/leave`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:user.email.toLowerCase()})})
+   const res=await fetch(`/api/events/${id}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"leave"})})
    if(!res.ok)throw new Error()
    setEvents(current=>current.filter(event=>event.id!==id))
    toast.success("You’ve left the event")

@@ -1,9 +1,24 @@
+import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import { serverEvents, type CommunityEvent, initialEvents } from "@/lib/events"
+import { auth } from "@/lib/auth"
 
 export async function GET() {
   try {
-    const response = await fetch("http://localhost:5000/events", { cache: "no-store" })
+    let authorization: string | undefined
+
+    try {
+      const tokenResult = await auth.api.getToken({ headers: await headers() })
+      if (tokenResult?.token) authorization = `Bearer ${tokenResult.token}`
+      console.log("Authorization for events GET:", authorization ?? "UNDEFINED")
+    } catch (error) {
+      console.log("Events GET token error:", error instanceof Error ? error.message : error)
+    }
+
+    const response = await fetch("http://localhost:5000/events", {
+      cache: "no-store",
+      headers: authorization ? { Authorization: authorization } : {},
+    })
     if (!response.ok) throw new Error("External events request failed")
     const remoteEvents = await response.json() as Array<Record<string, any>>
     const normalized: CommunityEvent[] = remoteEvents.map((event) => ({
@@ -17,6 +32,10 @@ export async function GET() {
       organizer: event.organizer ?? { name: "Alex Morgan", role: "Community Organizer", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" },
       attendees: event.attendees ?? 0,
       createdBy: "demo-user",
+      createdByEmail: typeof event.createdByEmail === "string" ? event.createdByEmail : undefined,
+      joinedByEmails: Array.isArray(event.joinedByEmails)
+        ? event.joinedByEmails.map(String)
+        : [],
     }))
     return NextResponse.json([...normalized, ...initialEvents])
   } catch {

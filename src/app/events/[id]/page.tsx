@@ -28,9 +28,11 @@ function EventDetailsContent() {
       return
     }
     try{
-      const res=await fetch(`http://localhost:5000/events/${params.id}/join`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:user.email.toLowerCase()})})
+      const res=await fetch(`/api/events/${params.id}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"join"})})
       if(!res.ok)throw new Error()
       setJoined(true);toast.success("You’ve joined the event!")
+      window.dispatchEvent(new Event("cc-joined-change"))
+      fetchEvent(params.id).then((loadedEvent)=>loadedEvent&&setEvent(loadedEvent))
     }catch{toast.error("Couldn’t join the event")}
   }
 
@@ -38,9 +40,11 @@ function EventDetailsContent() {
     if (!joined) return
     if(!user?.email)return
     try{
-      const res=await fetch(`http://localhost:5000/events/${params.id}/leave`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:user.email.toLowerCase()})})
+      const res=await fetch(`/api/events/${params.id}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"leave"})})
       if(!res.ok)throw new Error()
       setJoined(false);toast.success("You’ve left the event")
+      window.dispatchEvent(new Event("cc-joined-change"))
+      fetchEvent(params.id).then((loadedEvent)=>loadedEvent&&setEvent(loadedEvent))
     }catch{toast.error("Couldn’t leave the event")}
   }
 

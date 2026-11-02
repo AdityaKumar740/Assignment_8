@@ -10,7 +10,7 @@ const fallbackOrganizer = {
 
 export async function fetchEvents(): Promise<CommunityEvent[]> {
   try {
-    const response = await fetch("http://localhost:5000/events", { cache: "no-store" })
+    const response = await fetch("/api/events", { cache: "no-store" })
     if (!response.ok) throw new Error("Failed to fetch events")
     const remoteEvents = await response.json() as Array<Record<string, unknown>>
 
@@ -70,7 +70,7 @@ export async function fetchEvent(id: string): Promise<CommunityEvent | null> {
     : JSON.parse(localStorage.getItem("cc-created-events") || "[]") as CommunityEvent[]
   const localEvent = localCreatedEvents.find((event) => event.id === id)
   try {
-    const response = await fetch(`http://localhost:5000/events/${id}`, { cache: "no-store" })
+    const response = await fetch(`/api/events/${id}`, { cache: "no-store" })
     if (response.ok) {
       const event = await response.json() as Record<string, unknown>
       const organizer = event.organizer && typeof event.organizer === "object"
