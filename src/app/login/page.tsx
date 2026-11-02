@@ -24,6 +24,7 @@ export default function LoginPage() {
         toast.error(result.error.message || "Invalid email or password")
         return
       }
+      await authClient.getSession()
       toast.success("Logged in successfully")
       const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl")
       router.push(callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/")

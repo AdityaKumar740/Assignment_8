@@ -6,12 +6,23 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter";
 const client = new MongoClient(process.env.MONGO_URI as string);
 const db = client.db("assignment-8");
 
+const configuredBaseURL = process.env.BETTER_AUTH_URL?.trim()
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://assignment-8-taupe-five.vercel.app"
+    : configuredBaseURL ?? "http://localhost:3000"
+
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL,
+  trustedOrigins: [
+    baseURL,
+    "http://localhost:3000",
+    "https://assignment-8-taupe-five.vercel.app",
+  ],
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
