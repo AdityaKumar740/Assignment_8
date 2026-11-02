@@ -47,7 +47,7 @@ export function Navbar() {
           <span className="grid size-[38px] place-items-center rounded-full bg-forest"><span className="block h-5 w-[15px] -rotate-[32deg] rounded-[100%_0_100%_0] bg-lime"/></span>
           <span>Community <b className="text-forest">Connect</b></span>
         </Link>
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="ml-12 hidden items-center gap-8 md:flex">
           <Link className={`text-sm font-bold text-(--muted) hover:text-forest ${pathname === "/events" ? "!text-forest" : ""}`} href="/events">Upcoming Events</Link>
           <Link className="text-sm font-bold text-(--muted) hover:text-forest" href="/#why-us">About Us</Link>
         </div>
