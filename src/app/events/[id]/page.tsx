@@ -13,8 +13,18 @@ function EventDetailsContent() {
   const { user }=useAuth()
   const [event,setEvent]=useState<CommunityEvent|null>(null)
   const [joined,setJoined]=useState(false)
+  const [now,setNow]=useState<number|null>(null)
 
-  useEffect(()=>{ fetchEvent(params.id).then((loaded)=>{setEvent(loaded);setJoined(Boolean(user?.email&&loaded?.joinedByEmails?.some(email=>email.toLowerCase()===user.email.toLowerCase())))})},[params.id,user?.email])
+  useEffect(()=>{
+    const updateTime=()=>setNow(Date.now())
+    updateTime()
+    const interval=window.setInterval(updateTime,1000*60)
+    return ()=>window.clearInterval(interval)
+  },[])
+
+  useEffect(()=>{
+    fetchEvent(params.id).then((loaded)=>{setEvent(loaded);setJoined(Boolean(user?.email&&loaded?.joinedByEmails?.some(email=>email.toLowerCase()===user.email.toLowerCase())))})
+  },[params.id,user?.email])
 
   const setEventJoin=async(action:"join"|"leave")=>{
     if(!user?.email){toast.error("Please log in to join this event");return}
@@ -55,6 +65,7 @@ function EventDetailsContent() {
 
   if(!event)return <div className="mx-auto max-w-[1180px] px-6 py-12"><div className="rounded-2xl border border-dashed border-(--line) p-16 text-center"><h2 className="text-xl font-bold">Event not found</h2><p className="mt-2 text-(--muted)">This event may no longer be available.</p></div></div>
   const date=new Date(event.date)
+  const isExpired=Number.isNaN(date.getTime()) || (now !== null && date.getTime()<=now)
   return (
     <div className="mx-auto max-w-[1180px] px-6 py-12">
       <div className="grid gap-7 lg:grid-cols-[1fr_340px]">
@@ -70,7 +81,28 @@ function EventDetailsContent() {
           <Detail icon={<Clock size={18}/>} text={date.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}/>
           <Detail icon={<MapPin size={18}/>} text={event.location}/>
           <Detail icon={<Users size={18}/>} text={`${event.attendees} volunteers attending`}/>
-          <button className={`mt-4 flex h-12 w-full items-center justify-center rounded-lg font-black text-white ${joined?"bg-[#b42318] hover:bg-[#9f1c12]":"bg-forest hover:bg-forest-dark"}`} onClick={()=>setEventJoin(joined?"leave":"join")}>{joined?<><CheckCircle2 size={17} className="mr-2"/>Leave Event</>:"Join Event"}</button>
+          <button
+            disabled={isExpired}
+            className={`mt-4 flex h-12 w-full items-center justify-center rounded-lg font-black text-white transition-colors ${
+              isExpired
+                ? "cursor-not-allowed bg-gray-500"
+                : joined
+                  ? "bg-[#b42318] hover:bg-[#9f1c12]"
+                  : "bg-forest hover:bg-forest-dark"
+            }`}
+            onClick={() => setEventJoin(joined ? "leave" : "join")}
+          >
+            {isExpired
+              ? "Event Expired"
+              : joined
+                ? (
+                    <>
+                      <CheckCircle2 size={17} className="mr-2" />
+                      Leave Event
+                    </>
+                  )
+                : "Join Event"}
+          </button>
         </aside>
       </div>
     </div>
