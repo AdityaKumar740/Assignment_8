@@ -18,13 +18,39 @@ function EventDetailsContent() {
 
   const setEventJoin=async(action:"join"|"leave")=>{
     if(!user?.email){toast.error("Please log in to join this event");return}
+
     try{
-      const res=await fetch(`/api/events/${params.id}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action})})
-      if(!res.ok)throw new Error()
-      setJoined(action==="join");toast.success(action==="join"?"You’ve joined the event!":"You’ve left the event")
+      const res=await fetch(`/api/events/${params.id}`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action}),
+      })
+
+      const data=await res.json()
+
+      if(!res.ok){
+        console.error("Join event failed:",res.status,data)
+        toast.error(data.message||data.error||`Request failed: ${res.status}`)
+        return
+      }
+
+      setJoined(action==="join")
+
+      toast.success(
+        action==="join"
+          ?"You've joined the event!"
+          :"You've left the event"
+      )
+
       window.dispatchEvent(new Event("cc-joined-change"))
-      fetchEvent(params.id).then((loaded)=>loaded&&setEvent(loaded))
-    }catch{toast.error(action==="join"?"Couldn’t join the event":"Couldn’t leave the event")}
+
+      fetchEvent(params.id).then((loaded)=>{
+        if(loaded)setEvent(loaded)
+      })
+    }catch(error){
+      console.error("Join event network error:",error)
+      toast.error("Unable to connect to the event server")
+    }
   }
 
   if(!event)return <div className="mx-auto max-w-[1180px] px-6 py-12"><div className="rounded-2xl border border-dashed border-(--line) p-16 text-center"><h2 className="text-xl font-bold">Event not found</h2><p className="mt-2 text-(--muted)">This event may no longer be available.</p></div></div>
